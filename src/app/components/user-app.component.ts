@@ -16,6 +16,7 @@ export class UserAppComponent implements OnInit {
     title : string = 'Listado de usuarios';
     users: User[] = [];
     userSelected: User;
+    open: boolean=false;
 
     constructor(
       private service: UserService,
@@ -48,24 +49,25 @@ export class UserAppComponent implements OnInit {
     `
   });
     this.userSelected = new User();
+    this.setOpen();
   }
   removeUser(id: number):void{
     Swal.fire({
-  title: "Estas segurp?",
+  title: "Estas seguro?",
   text: "nohay marcha atras",
   icon: "warning",
   showCancelButton: true,
   confirmButtonColor: "#3085d6",
   cancelButtonColor: "#d33",
-  confirmButtonText: "Elemento borrado!"
+  confirmButtonText: "Borrar!"
 }).then((result) => {
   if (result.isConfirmed) {
     this.users = this.users.filter(user =>
       user.id!=id
     )
     Swal.fire({
-      title: "Deleted!",
-      text: "Your file has been deleted.",
+      title: "Eliminado!",
+      text: "Usuario eliminado",
       icon: "success"
     });
   }
@@ -73,6 +75,10 @@ export class UserAppComponent implements OnInit {
   }
   setSelectedUser(userRow: User):void{
     this.userSelected= {... userRow}
+      this.open= true;
+    }
 
+    setOpen(){
+      this.open=!this.open;
     }
 }
