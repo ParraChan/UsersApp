@@ -3,6 +3,7 @@ import { User } from '../models/user';
 import { UserService } from '../services/user.service';
 import { UserComponent } from './user/user.component';
 import { UserFormComponent } from './user-form/user-form.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'user-app',
@@ -31,12 +32,44 @@ export class UserAppComponent implements OnInit {
     }else{
           this.users =[... this.users, {... user, id: new Date().getTime()}];
     }
+    Swal.fire({
+    title: "Guardado",
+    text: "El usuario se ha guardado correctamente",
+    width: 600,
+    padding: "3em",
+    color: "#716add",
+    background: "#fff url(/img/cat.gif)",
+    imageUrl: 'img/cat.gif',
+    backdrop: `
+      rgba(0,0,123,0.4)
+      url("img/cat.gif")
+      left top
+      no-repeat
+    `
+  });
     this.userSelected = new User();
   }
   removeUser(id: number):void{
+    Swal.fire({
+  title: "Estas segurp?",
+  text: "nohay marcha atras",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Elemento borrado!"
+}).then((result) => {
+  if (result.isConfirmed) {
     this.users = this.users.filter(user =>
       user.id!=id
     )
+    Swal.fire({
+      title: "Deleted!",
+      text: "Your file has been deleted.",
+      icon: "success"
+    });
+  }
+});   
   }
   setSelectedUser(userRow: User):void{
     this.userSelected= {... userRow}
