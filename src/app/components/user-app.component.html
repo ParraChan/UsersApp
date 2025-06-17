@@ -7,7 +7,7 @@
         <user-form (newUserEmitter)="addUser($event)"></user-form>
         </div>
         <div class="col">
-           <user [users]="users"></user>
+           <user [users]="users" (idUserEventEmitter)="removeUser($event)"></user>
         </div>
     </div>
 </div>
