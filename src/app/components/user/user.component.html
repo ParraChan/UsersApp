@@ -9,7 +9,9 @@
                         <th>apellido</th>
                         <th>email</th>
                         <th>username</th>
-                        <th>remove</th>
+                        <th>eliminar</th>
+                        <th>actualizar</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -24,6 +26,14 @@
                             <button class="btn btn-danger btn-sm"
                             (click)="onRemoveUSer(user.id)">
                                 Eliminar
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-info btn-sm"
+                            (click)="onSelectedUser(user)"
+
+                            >
+                                Editar
                             </button>
                         </td>
                         
