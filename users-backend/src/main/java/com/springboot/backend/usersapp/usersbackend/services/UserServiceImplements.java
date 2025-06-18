@@ -42,7 +42,7 @@ public class UserServiceImplements implements UserService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+       repository.deleteById(id);
     }
 
 }
