@@ -31,7 +31,7 @@ public class UserController {
         return service.findAll();
     }
 
-    @GetMapping("{/id}")
+    @GetMapping("/{id}")
     public ResponseEntity<User> showById(@PathVariable Long id) {
         Optional<User> userOptional = service.findById(id);
         if (userOptional.isPresent()) {
@@ -62,7 +62,7 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("{/id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         Optional<User> userOptional = service.findById((id));
         if (userOptional.isPresent()) {
