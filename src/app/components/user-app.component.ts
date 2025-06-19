@@ -44,17 +44,62 @@ export class UserAppComponent implements OnInit {
   addUser() {
     this.sharingData.newUserEmitter.subscribe(user => {
       if (user.id > 0) {
-        this.service.update(user).subscribe(userUpdate => {
-          this.users = this.users.map(u => (u.id == userUpdate.id) ? { ...userUpdate } : u)
-          this.router.navigate(['/users'], { state: { users: this.users } });
-        });
+        this.service.update(user).subscribe({
+          next: (userUpdate) => {
+            this.users = this.users.map(u => (u.id == userUpdate.id) ? { ...userUpdate } : u)
+            Swal.fire({
+              title: "Actualizado",
+              text: "El usuario se ha guardado correctamente",
+              width: 600,
+              padding: "3em",
+              color: "#716add",
+              background: "#fff", backdrop: `
+                rgba(0,0,123,0.4)
+                url("assets/img/cat.gif")
+                left top
+                no-repeat
+              `
+            }); this.router.navigate(['/users'], { state: { users: this.users } });
+
+
+          },
+          error: (err) => {
+            if (err.status == 400) {
+              this.sharingData.errorsUserFormEventEmitter.emit(err.error);
+            }
+            //console.log(err.error)
+          }
+        }
+        );
 
       } else {
 
-        this.service.create(user).subscribe(userNew => {
-          console.log(userNew)
-          this.users = [... this.users, { ...userNew }];
-          this.router.navigate(['/users'], { state: { users: this.users } });
+        this.service.create(user).subscribe({
+          next: (userNew) => {
+            console.log(userNew)
+            this.users = [... this.users, { ...userNew }];
+            this.router.navigate(['/users'], { state: { users: this.users } });
+
+            Swal.fire({
+              title: "Creado",
+              text: "El usuario se ha actualizado correctamente",
+              width: 600,
+              padding: "3em",
+              color: "#716add",
+              background: "#fff", backdrop: `
+                rgba(0,0,123,0.4)
+                url("assets/img/cat.gif")
+                left top
+                no-repeat
+              `
+            });
+          },
+          error: (err) => {
+            console.log(err.status);
+            if (err.status == 400) {
+              this.sharingData.errorsUserFormEventEmitter.emit(err.error);
+            }
+          }
         });
 
       }
@@ -62,19 +107,7 @@ export class UserAppComponent implements OnInit {
 
       // });
 
-      Swal.fire({
-        title: "Guardado",
-        text: "El usuario se ha guardado correctamente",
-        width: 600,
-        padding: "3em",
-        color: "#716add",
-        background: "#fff", backdrop: `
-      rgba(0,0,123,0.4)
-      url("#")
-      left top
-      no-repeat
-    `
-      });
+
     })
 
   }
