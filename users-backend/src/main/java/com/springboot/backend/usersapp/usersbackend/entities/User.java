@@ -7,23 +7,39 @@ import  static jakarta.persistence.GenerationType.*;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
 public class User {
 
 
+    //@NotNull para numeros , etc @NotBlank para no tener espacios en blanco
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @NotEmpty
     private String name;
 
+    @NotEmpty
     @Column(name = "lastname")
     private String lastname;
     
+    @NotBlank
+    @Email
     private String email;
+    
+    @NotBlank
+    @Size(min = 8,max = 20)
     private String username;
+    
+    @NotBlank
+    //(@Size(min = 6,max = 20)
     private String password;
 
     public Long getId() {
