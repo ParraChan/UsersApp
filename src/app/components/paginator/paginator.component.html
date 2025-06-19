@@ -1,0 +1,25 @@
+@if (paginator.totalPages>1) {
+<ul class="pagination">
+  <li class="page-item">
+    <a class="page-link" [routerLink]="[url, 0]">Primera</a>
+  </li>
+  @if (paginator.number>0) {
+  <li class="page-item">
+    <a class="page-link" [routerLink]="[url, paginator.number - 1]">Atras</a>
+  </li>
+  } 
+  @if (paginator.number< paginator.totalPages-1) {
+  <li class="page-item">
+    <a class="page-link" [routerLink]="[url, paginator.number + 1]"
+      >Siguiente</a
+    >
+  </li>
+  }
+  <li class="page-item">
+    <a class="page-link" [routerLink]="[url, paginator.totalPages - 1]"
+      >Ultimo</a
+    >
+  </li>
+</ul>
+
+}

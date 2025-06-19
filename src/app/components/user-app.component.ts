@@ -17,6 +17,7 @@ import { SharingDataService } from '../services/sharing-data.service';
 export class UserAppComponent implements OnInit {
 
   users: User[] = [];
+  paginator: any={};
 
   constructor(
     private router: Router,
@@ -26,8 +27,9 @@ export class UserAppComponent implements OnInit {
   }
 
   pageUsersEvent(){
-    this.sharingData.pageUsersEventEmitter.subscribe(users => {
-      this.users = users;
+    this.sharingData.pageUsersEventEmitter.subscribe(pageable => {
+      this.users = pageable.users;
+      this.paginator = pageable.paginator;
     })
   }
 
@@ -71,7 +73,8 @@ export class UserAppComponent implements OnInit {
                 left top
                 no-repeat
               `
-            }); this.router.navigate(['/users'], { state: { users: this.users } });
+            }); this.router.navigate(['/users'], { state:
+               { users: this.users ,paginator: this.paginator } });
 
 
           },
@@ -90,7 +93,7 @@ export class UserAppComponent implements OnInit {
           next: (userNew) => {
             console.log(userNew)
             this.users = [... this.users, { ...userNew }];
-            this.router.navigate(['/users'], { state: { users: this.users } });
+            this.router.navigate(['/users'], { state: { users: this.users ,paginator: this.paginator} });
 
             Swal.fire({
               title: "Creado",
@@ -139,7 +142,10 @@ export class UserAppComponent implements OnInit {
             this.users = this.users.filter(user =>
               user.id != id);
             this.router.navigate(['/users/create'], { skipLocationChange: true }).then(() => {
-              this.router.navigate(['/users'], { state: { users: this.users } });
+              this.router.navigate(['/users'], { state: { users: this.users,paginator: this.paginator
+
+                
+               } });
             });
 
           });
