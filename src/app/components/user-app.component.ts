@@ -25,13 +25,20 @@ export class UserAppComponent implements OnInit {
     private route: ActivatedRoute  ) {
   }
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe(params =>{
-      const page = +(params.get('page')  || '0');
-       this.service.findAllPageable(page).subscribe(pageable => this.users = pageable.content as User[]);
+  pageUsersEvent(){
+    this.sharingData.pageUsersEventEmitter.subscribe(users => {
+      this.users = users;
     })
-   // this.service.findAll().subscribe(users => this.users = users);
-   
+  }
+
+  ngOnInit(): void {
+   /* this.route.paramMap.subscribe(params =>{
+      const page = +(params.get('page')  || '0');
+      console.log(page)
+       this.service.findAllPageable(page).subscribe(pageable => this.users = pageable.content as User[]);
+    })*/
+    this.service.findAll().subscribe(users => this.users = users);
+    this.pageUsersEvent();
     this.addUser();
     this.removeUser();
     this.findUserById();
