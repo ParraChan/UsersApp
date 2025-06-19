@@ -14,7 +14,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link active" aria-current="page" [routerLink]="['/users']"
+        <a
+          class="nav-link active"
+          aria-current="page"
+          [routerLink]="['/users']"
+          [state]="{users}"
           >Home</a
         >
         <a class="nav-link" [routerLink]="['/users/create']">Agregar usuario</a>

@@ -32,9 +32,9 @@ export class UserAppComponent implements OnInit {
     this.findUserById();
   }
 
-  findUserById(){
-    this.sharingData.findUserByIdEventEmitter.subscribe(id =>{
-      const user = this.users.find(user => user.id==id)
+  findUserById() {
+    this.sharingData.findUserByIdEventEmitter.subscribe(id => {
+      const user = this.users.find(user => user.id == id)
 
       this.sharingData.selectUserEventEmitter.emit(user);
     })
@@ -44,22 +44,24 @@ export class UserAppComponent implements OnInit {
   addUser() {
     this.sharingData.newUserEmitter.subscribe(user => {
       if (user.id > 0) {
-        this.service.update(user).subscribe(userUpdate =>{
+        this.service.update(user).subscribe(userUpdate => {
           this.users = this.users.map(u => (u.id == userUpdate.id) ? { ...userUpdate } : u)
+          this.router.navigate(['/users'], { state: { users: this.users } });
         });
-        
+
       } else {
-          
-          this.service.create(user).subscribe(userNew =>{
-            console.log(userNew)
+
+        this.service.create(user).subscribe(userNew => {
+          console.log(userNew)
           this.users = [... this.users, { ...userNew }];
+          this.router.navigate(['/users'], { state: { users: this.users } });
         });
-        
+
       }
-        //this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-          this.router.navigate(['/users']);
-         // });
-     
+      //this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+
+      // });
+
       Swal.fire({
         title: "Guardado",
         text: "El usuario se ha guardado correctamente",
@@ -88,15 +90,15 @@ export class UserAppComponent implements OnInit {
         confirmButtonText: "Borrar!"
       }).then((result) => {
         if (result.isConfirmed) {
-          this.service.remove(id).subscribe(()=>{
+          this.service.remove(id).subscribe(() => {
             this.users = this.users.filter(user =>
-            user.id != id);
-          this.router.navigate(['/users/create'], { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/users']);
-          });
+              user.id != id);
+            this.router.navigate(['/users/create'], { skipLocationChange: true }).then(() => {
+              this.router.navigate(['/users'], { state: { users: this.users } });
+            });
 
           });
-          
+
           Swal.fire({
             title: "Eliminado!",
             text: "Usuario eliminado",
