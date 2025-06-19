@@ -56,9 +56,9 @@ export class UserAppComponent implements OnInit {
         });
         
       }
-        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        //this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
           this.router.navigate(['/users']);
-          });
+         // });
      
       Swal.fire({
         title: "Guardado",

@@ -10,6 +10,5 @@ import { User } from '../../models/user';
 })
 export class NavbarComponent {
 
-  @Input() users: User[]=[];
 
 }
