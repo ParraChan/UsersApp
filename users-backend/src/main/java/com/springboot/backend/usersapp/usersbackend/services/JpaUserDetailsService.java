@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.springboot.backend.usersapp.usersbackend.entities.User;
 import com.springboot.backend.usersapp.usersbackend.repositories.UserRepository;
-import com.springboot.backend.usersapp.usersbackend.entities.Role;
 
 @Service
 public class JpaUserDetailsService implements UserDetailsService {

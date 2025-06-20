@@ -1,13 +1,17 @@
 package com.springboot.backend.usersapp.usersbackend.auth.filter;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.crypto.SecretKey;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
@@ -15,12 +19,14 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.backend.usersapp.usersbackend.entities.User;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import static com.springboot.backend.usersapp.usersbackend.auth.TokenJwtConfig.*;
+
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
@@ -59,18 +65,41 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authResult
                 .getPrincipal();
         String username = user.getUsername();
+        
+        Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
+        
+        Claims claims = Jwts.claims()
+                .add("authorities",new ObjectMapper().writeValueAsString(roles))
+                .add("username", username)
+                .build();
 
-
-        String jws = Jwts.builder()
-        .subject(username)
-        .signWith(SECRET_KEY)
-        .compact();
+        String jwt = Jwts.builder()
+                .subject(username)
+                .claims(claims)
+                .signWith(SECRET_KEY)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 3600000))
+                .compact();
+        response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + jwt);
+        Map<String, String> body = new HashMap<>();
+        body.put("token", jwt);
+        body.put("username", username);
+        body.put("message", String.format("Hola has iniciado sesion con exito", username));
+        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        response.setContentType(CONTENT_TYPE);
+        response.setStatus(200);
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException failed) throws IOException, ServletException {
-        super.unsuccessfulAuthentication(request, response, failed);
-    }
+                Map<String, String> body = new HashMap<>();
+                body.put("message", "error en la autenticacion con username y passwd incorrectos");
+                body.put("error", failed.getMessage());
+
+                response.getWriter().write(new ObjectMapper().writeValueAsString(body) );
+                response.setContentType(CONTENT_TYPE);
+                response.setStatus(401);
+            }
 
 }
