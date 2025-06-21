@@ -1,5 +1,6 @@
 package com.springboot.backend.usersapp.usersbackend.controllers;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PutMapping;
 
 //@CrossOrigin(originPatterns = {"*"})
-@CrossOrigin(originPatterns = {"http://localhost:4200"})
+@CrossOrigin(origins={"http://localhost:4200"})
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -44,23 +45,23 @@ public class UserController {
 
     @GetMapping("/page/{page}")
     public Page<User> listPageable(@PathVariable Integer page) {
-        Pageable pageable = PageRequest.of(page, 5);
+        Pageable pageable = PageRequest.of(page, 4);
         return service.findAll(pageable);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> showById(@PathVariable Long id) {
+    public ResponseEntity<?> show(@PathVariable Long id) {
         Optional<User> userOptional = service.findById(id);
         if (userOptional.isPresent()) {
-            return ResponseEntity.ok(userOptional.orElseThrow());
+            return ResponseEntity.status(HttpStatus.OK).body(userOptional.orElseThrow());
         }
-        return ResponseEntity.notFound().build();
-
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap("error", "el usuario no se encontro por el id:" + id));
     }
-
+    
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result){
-        if(result.hasErrors()){
+    public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
+        if (result.hasErrors()) {
             return validation(result);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
@@ -69,43 +70,41 @@ public class UserController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result , @PathVariable Long id) {
-            if(result.hasErrors()){
+    public ResponseEntity<?> update(@Valid @RequestBody User user, BindingResult result, @PathVariable Long id) {
+
+        if (result.hasErrors()) {
             return validation(result);
         }
-        Optional<User> userOptional = service.findById((id));
-        if (userOptional.isPresent()) {
+        
+        Optional<User> userOptional = service.findById(id);
 
-            User userDB = userOptional.get();
-            userDB.setEmail(user.getEmail());
-            userDB.setLastname(user.getLastname());
-            userDB.setName(user.getName());
-            userDB.setPassword(user.getPassword());
-            userDB.setUsername(user.getUsername());
-            return ResponseEntity.ok(service.save(userDB));
+        if (userOptional.isPresent()) {
+            User userDb = userOptional.get();
+            userDb.setEmail(user.getEmail());
+            userDb.setLastname(user.getLastname());
+            userDb.setName(user.getName());
+            userDb.setPassword(user.getPassword());
+            userDb.setUsername(user.getUsername());
+            return ResponseEntity.ok(service.save(userDb));
         }
         return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-        Optional<User> userOptional = service.findById((id));
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        Optional<User> userOptional = service.findById(id);
         if (userOptional.isPresent()) {
-       
-        service.deleteById(id);
-        return ResponseEntity.noContent().build();
+            service.deleteById(id);
+            return ResponseEntity.noContent().build();
         }
-       return ResponseEntity.notFound().build(); 
+        return ResponseEntity.notFound().build();
     }
-
-
-
-        private ResponseEntity<?> validation(BindingResult result) {
+    
+    private ResponseEntity<?> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
-        result.getFieldErrors().forEach(error ->{
-            errors.put(error.getField(), "EL campo "+ error.getField() + ' ' + error.getDefaultMessage());
+        result.getFieldErrors().forEach(error -> {
+            errors.put(error.getField(), "El campo " + error.getField() + " " + error.getDefaultMessage());
         });
         return ResponseEntity.badRequest().body(errors);
     }
-
 }

@@ -53,6 +53,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
                 password);
         return this.authenticationManager.authenticate(authenticationToken);
@@ -65,11 +66,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authResult
                 .getPrincipal();
         String username = user.getUsername();
-        
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
-        
-        Claims claims = Jwts.claims()
-                .add("authorities",new ObjectMapper().writeValueAsString(roles))
+
+        Claims claims = Jwts
+                .claims()
+                .add("authorities", new ObjectMapper().writeValueAsString(roles))
                 .add("username", username)
                 .build();
 
@@ -80,11 +81,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 3600000))
                 .compact();
+
         response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + jwt);
+
         Map<String, String> body = new HashMap<>();
         body.put("token", jwt);
         body.put("username", username);
-        body.put("message", String.format("Hola has iniciado sesion con exito", username));
+        body.put("message", String.format("Hola %s has iniciado sesion con exito", username));
+
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setContentType(CONTENT_TYPE);
         response.setStatus(200);
@@ -93,13 +97,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException failed) throws IOException, ServletException {
-                Map<String, String> body = new HashMap<>();
-                body.put("message", "error en la autenticacion con username y passwd incorrectos");
-                body.put("error", failed.getMessage());
 
-                response.getWriter().write(new ObjectMapper().writeValueAsString(body) );
-                response.setContentType(CONTENT_TYPE);
-                response.setStatus(401);
-            }
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "Error en la autenticacion con username o password incorrecto!");
+        body.put("error", failed.getMessage());
+
+        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        response.setContentType(CONTENT_TYPE);
+        response.setStatus(401);
+    }
 
 }
