@@ -1,21 +1,34 @@
 package com.springboot.backend.usersapp.usersbackend.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.springboot.backend.usersapp.usersbackend.entities.Role;
 import com.springboot.backend.usersapp.usersbackend.entities.User;
+import com.springboot.backend.usersapp.usersbackend.models.UserRequest;
+import com.springboot.backend.usersapp.usersbackend.repositories.RoleRepository;
 import com.springboot.backend.usersapp.usersbackend.repositories.UserRepository;
 
 @Service
 public class UserServiceImplements implements UserService {
 
     private UserRepository repository;
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    
 
     
 
@@ -45,15 +58,41 @@ public class UserServiceImplements implements UserService {
     @Override
     @Transactional
     public User save(User user) {
+
+        List<Role> roles = new ArrayList<>();
+        Optional<Role> optionalRoleUser = roleRepository.findByName("ROLE_USER");
+
+        //(role::add)
+        optionalRoleUser.ifPresent(roles::add);
+
+        user.setRoles(roles);
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return this.repository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> update(UserRequest user, Long id) {
+        
+        Optional<User> userOptional = repository.findById(id);
+
+        if (userOptional.isPresent()) {
+            User userDb = userOptional.get();
+            userDb.setEmail(user.getEmail());
+            userDb.setLastname(user.getLastname());
+            userDb.setName(user.getName());
+            userDb.setUsername(user.getUsername());
+            return Optional.of(repository.save(userDb));
+        }
+        return Optional.empty();
+
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
        repository.deleteById(id);
-    }
-
-    
+    } 
 
 }
