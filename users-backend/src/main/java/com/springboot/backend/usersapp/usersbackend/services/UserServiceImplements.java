@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.springboot.backend.usersapp.usersbackend.entities.Role;
 import com.springboot.backend.usersapp.usersbackend.entities.User;
+import com.springboot.backend.usersapp.usersbackend.models.IUser;
 import com.springboot.backend.usersapp.usersbackend.models.UserRequest;
 import com.springboot.backend.usersapp.usersbackend.repositories.RoleRepository;
 import com.springboot.backend.usersapp.usersbackend.repositories.UserRepository;
@@ -28,10 +29,6 @@ public class UserServiceImplements implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    
-
-    
-
     public UserServiceImplements(UserRepository repository) {
         this.repository = repository;
     }
@@ -39,9 +36,8 @@ public class UserServiceImplements implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<User> findAll() {
-        return (List)this.repository.findAll();
+        return (List) this.repository.findAll();
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -49,7 +45,7 @@ public class UserServiceImplements implements UserService {
         return this.repository.findById(id);
     }
 
-     @Override
+    @Override
     @Transactional(readOnly = true)
     public Page<User> findAll(Pageable pageable) {
         return this.repository.findAll(pageable);
@@ -59,22 +55,18 @@ public class UserServiceImplements implements UserService {
     @Transactional
     public User save(User user) {
 
-        List<Role> roles = new ArrayList<>();
-        Optional<Role> optionalRoleUser = roleRepository.findByName("ROLE_USER");
-
-        //(role::add)
-        optionalRoleUser.ifPresent(roles::add);
-
-        user.setRoles(roles);
+        user.setRoles(getRoles(user));
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return this.repository.save(user);
     }
 
+    
+
     @Override
     @Transactional
     public Optional<User> update(UserRequest user, Long id) {
-        
+
         Optional<User> userOptional = repository.findById(id);
 
         if (userOptional.isPresent()) {
@@ -83,6 +75,9 @@ public class UserServiceImplements implements UserService {
             userDb.setLastname(user.getLastname());
             userDb.setName(user.getName());
             userDb.setUsername(user.getUsername());
+
+        
+            userDb.setRoles(getRoles(user));
             return Optional.of(repository.save(userDb));
         }
         return Optional.empty();
@@ -92,7 +87,23 @@ public class UserServiceImplements implements UserService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-       repository.deleteById(id);
-    } 
+        repository.deleteById(id);
+    }
+
+
+
+    private List<Role> getRoles(IUser user) {
+        List<Role> roles = new ArrayList<>();
+        Optional<Role> optionalRoleUser = roleRepository.findByName("ROLE_USER");
+        // (role::add)
+        optionalRoleUser.ifPresent(roles::add);
+        if (user.isAdmin()) {
+            Optional<Role> optionalRoleAdmin = roleRepository.findByName("ROLE_ADMIN");
+            // (role::add)
+            optionalRoleAdmin.ifPresent(roles::add);
+
+        }
+        return roles;
+    }
 
 }
