@@ -94,8 +94,8 @@ export class UserAppComponent implements OnInit {
     this.sharingData.newUserEventEmitter.subscribe(user => {
       if (user.id > 0) {
         this.service.update(user).subscribe({
-          next: (userUpdate) => {
-            this.users = this.users.map(u => (u.id == userUpdate.id) ? { ...userUpdate } : u)
+          next: (userUpdated) => {
+            this.users = this.users.map(u => (u.id == userUpdated.id) ? { ...userUpdated } : u)
             Swal.fire({
               title: "Actualizado",
               text: "El usuario se ha guardado correctamente",
