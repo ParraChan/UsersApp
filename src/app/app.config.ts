@@ -10,6 +10,7 @@ import { provideEffects } from '@ngrx/effects';
 import { UsersEffects } from './store/users/users.effects';
 import { authReducer } from './store/auth/auth.reducer';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { AuthEffects } from './store/auth/auth.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes),
@@ -17,5 +18,6 @@ export const appConfig: ApplicationConfig = {
     provideStore({
         users: usersReducer,
         auth: authReducer
-    }), provideEffects(UsersEffects), provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })]
+    }), provideEffects(UsersEffects, AuthEffects),
+     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })]
 };
