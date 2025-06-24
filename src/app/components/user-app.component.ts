@@ -21,7 +21,6 @@ export class UserAppComponent implements OnInit {
     private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.removeUser();
     this.handlerLogin();
   }
 
@@ -32,7 +31,6 @@ export class UserAppComponent implements OnInit {
       this.authService.loginUser({ username, password }).subscribe({
         next: response => {
           const token = response.token;
-          console.log(token);
           const payload = this.authService.getPayload(token);
 
           const user = { username: payload.sub };

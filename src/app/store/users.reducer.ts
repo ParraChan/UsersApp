@@ -15,7 +15,7 @@ export const usersReducer = createReducer(
         users: state.users,
         paginator: state.paginator,
         user: {... user},
-        errors: state.errors
+        errors: {}
 
     })),
     on(setUserForm,(state,{ user })=>({

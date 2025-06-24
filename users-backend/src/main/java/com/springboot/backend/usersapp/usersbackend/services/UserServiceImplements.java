@@ -86,9 +86,8 @@ public class UserServiceImplements implements UserService {
 
     @Override
     @Transactional
-    public Long deleteById(Long id) {
+    public void deleteById(Long id) {
         repository.deleteById(id);
-        return id;
     }
 
 
