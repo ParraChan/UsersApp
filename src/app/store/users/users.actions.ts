@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { User } from "../models/user";
+import { User } from "../../models/user";
 
 export const findAll = createAction('findAll', props<{ users: User[] }>());
 export const findAllPageable = createAction('findAllPageable', props<{ users: User[], paginator: any }>());
