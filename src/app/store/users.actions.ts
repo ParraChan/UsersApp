@@ -15,8 +15,7 @@ export const removeSuccess = createAction('removeSuccess', props<{ id: number }>
 
 export const load = createAction('load',props<{page:number}>());
 
-export const setErrors = createAction ('setErrors',props<{ errors :any}>());
+export const setErrors = createAction ('setErrors',props<{ userForm: User, errors :any}>());
 
 export const resetUser = createAction('resetUser');
 
-export const setUserForm = createAction('setUserForm',props<{user: User}>());
