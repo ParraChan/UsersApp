@@ -32,25 +32,10 @@ export class UserComponent implements OnInit {
       this.store.select('users').subscribe(state =>{
         this.users = state.users;
         this.paginator = state.paginator;
-      })
-
-
+      });
   }
-  ngOnInit(): void {
-    if (this.users == undefined || this.users == null || this.users.length == 0) {
-      console.log('consulta findAll')
-      //this.service.findAll().subscribe(users => this.users= users);  
-      this.route.paramMap.subscribe(params => {
-        const page = +(params.get('page') || '0');
-        console.log(page)
-        this.store.dispatch(load({page}));
-        /*this.service.findAllPageable(page).subscribe(pageable => {
-          this.users = pageable.content as User[]
-          this.paginator = pageable;
-          this.sharingData.pageUsersEventEmitter.emit({ users: this.users, paginator: this.paginator });
-        });*/
-      })
-    }
+ ngOnInit(): void {
+    this.route.paramMap.subscribe(params => this.store.dispatch(load({ page: +(params.get('page') || '0') })))
   }
 
   onRemoveUSer(id: number): void {
