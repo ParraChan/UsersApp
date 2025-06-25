@@ -65,25 +65,42 @@ public class UserController {
         if (result.hasErrors()) {
             return validation(result);
         }
+        try{
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
+
+        }
+        catch(IllegalArgumentException e){
+            return ResponseEntity
+            .badRequest()
+            .body(Map.of("message ",e.getMessage()));
+            
+        }
     }
 
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id) {
+public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id) {
 
-        if (result.hasErrors()) {
-            return validation(result);
-        }
-        
+    if (result.hasErrors()) {
+        return validation(result);
+    }
+
+    try {
         Optional<User> userOptional = service.update(user, id);
 
-        if (userOptional.isPresent()) {   
-            return ResponseEntity.ok(userOptional.orElseThrow());
+        if (userOptional.isPresent()) {
+            return ResponseEntity.ok(userOptional.get());
+        } else {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of("message", e.getMessage()));
     }
+}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {

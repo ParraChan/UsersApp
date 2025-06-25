@@ -54,6 +54,15 @@ public class UserServiceImplements implements UserService {
     @Override
     @Transactional
     public User save(User user) {
+        
+        if(repository.existsByUsername(user.getUsername())){
+            throw new IllegalArgumentException("Usuario existente");
+        }
+
+        if(repository.existsByEmail(user.getEmail())){
+            throw new IllegalArgumentException("Email existente");
+        }
+
 
         user.setRoles(getRoles(user));
 
@@ -70,12 +79,22 @@ public class UserServiceImplements implements UserService {
         Optional<User> userOptional = repository.findById(id);
 
         if (userOptional.isPresent()) {
-            User userDb = userOptional.get();
+             User userDb = userOptional.get();
+
+            if (repository.existsByEmail(user.getEmail()) && !user.getEmail().equals(userDb.getEmail())) {
+            throw new IllegalArgumentException("El correo ya está registrado.");
+             }
+
+             if (repository.existsByUsername(user.getUsername()) && !user.getUsername().equals(userDb.getUsername())) {
+            throw new IllegalArgumentException("El nombre de usuario ya está registrado.");
+            }
+           
             userDb.setEmail(user.getEmail());
             userDb.setLastname(user.getLastname());
             userDb.setName(user.getName());
             userDb.setUsername(user.getUsername());
-
+            
+         
         
             userDb.setRoles(getRoles(user));
             return Optional.of(repository.save(userDb));

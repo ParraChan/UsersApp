@@ -3,7 +3,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { User } from '../../models/user';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { add, find, resetUser, resetUserEdit, update } from '../../store/users/users.actions';
+import { add, find, findAll, findEmailandUsername, resetUser, resetUserEdit, update } from '../../store/users/users.actions';
 
 @Component({
   selector: 'user-form',
@@ -15,6 +15,9 @@ export class UserFormComponent implements OnInit {
 
   user: User;
   errors: any = {};
+  emails: string[] = [];
+  usernames: string[] = [];
+
 
   constructor(
     private store: Store<{ users: any }>,
@@ -24,6 +27,8 @@ export class UserFormComponent implements OnInit {
     this.store.select('users').subscribe(state => {
       this.errors = state.errors;
       this.user = { ...state.user };
+      this.emails = state.emails || [];
+      this.usernames = state.usernames || [];
 
     })
   }
@@ -43,10 +48,12 @@ export class UserFormComponent implements OnInit {
   onSubmit(userForm: NgForm): void {
 
     if (this.user.id > 0) {
-      console.log(this.user.username);
-      this.store.dispatch(update({ userUpdated: this.user }))
+
+      console.log(this.user);
+      this.store.dispatch(update({ userUpdated: this.user }));
       console.log(this.user);
     } else {
+
       this.store.dispatch(add({userNew: this.user}))
     }
   }

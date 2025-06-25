@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { UserService } from "../../services/user.service";
-import { catchError, EMPTY, exhaustMap, map, of, tap } from "rxjs";
+import { catchError, EMPTY, exhaustMap, map, of, switchMap, tap } from "rxjs";
 import { add, addSuccess, findAll, findAllPageable, load, remove, removeSuccess, setErrors, setPaginator, update, updateSuccess } from "./users.actions";
 import { User } from "../../models/user";
 import Swal from "sweetalert2";
@@ -29,37 +29,38 @@ export class UsersEffects {
 
     );
 
+
     addUser$ = createEffect(
-        () =>this.actions$.pipe(
+        () => this.actions$.pipe(
             ofType(add),
             exhaustMap(action => this.service.create(action.userNew)
-            .pipe(
+                .pipe(
                     map(userNew => addSuccess({ userNew })),
                     catchError(error => (error.status == 400) ? of(setErrors({ userForm: action.userNew, errors: error.error })) : of(error)
                     )
                 )
             )
         )
-    )
+    );
 
-     addSuccessUser$ = createEffect(() => this.actions$.pipe(
+    addSuccessUser$ = createEffect(() => this.actions$.pipe(
         ofType(addSuccess),
         tap(() => {
             this.router.navigate(['/users']);
 
-              Swal.fire({
-                         title: "Usuario creado",
-                         text: "El usuario se ha creado correctamente",
-                         width: 600,
-                         padding: "3em",
-                         color: "#716add",
-                         background: "#fff", backdrop: `
+            Swal.fire({
+                title: "Usuario creado",
+                text: "El usuario se ha creado correctamente",
+                width: 600,
+                padding: "3em",
+                color: "#716add",
+                background: "#fff", backdrop: `
                            rgba(0,0,123,0.4)
                            url("assets/img/cat.gif")
                            left top
                            no-repeat
                          `
-                       });
+            });
         })
     ), { dispatch: false })
 
@@ -68,40 +69,40 @@ export class UsersEffects {
         tap(() => {
             this.router.navigate(['/users']);
 
-               Swal.fire({
-                          title: "Actualizado",
-                          text: "El usuario se ha actualizado correctamente",
-                          width: 600,
-                          padding: "3em",
-                          color: "#716add",
-                          background: "#fff", backdrop: `
+            Swal.fire({
+                title: "Actualizado",
+                text: "El usuario se ha actualizado correctamente",
+                width: 600,
+                padding: "3em",
+                color: "#716add",
+                background: "#fff", backdrop: `
                             rgba(0,0,123,0.4)
                             url("assets/img/cat.gif")
                             left top
                             no-repeat
                           `
-                        });
+            });
         })
     ), { dispatch: false })
 
-       removeSuccessUser$ = createEffect(() => this.actions$.pipe(
+    removeSuccessUser$ = createEffect(() => this.actions$.pipe(
         ofType(removeSuccess),
         tap(() => {
             this.router.navigate(['/users']);
 
-               Swal.fire({
-                          title: "Eliminado",
-                          text: "El usuario se ha eliminado correctamente",
-                          width: 600,
-                          padding: "3em",
-                          color: "#716add",
-                          background: "#fff", backdrop: `
+            Swal.fire({
+                title: "Eliminado",
+                text: "El usuario se ha eliminado correctamente",
+                width: 600,
+                padding: "3em",
+                color: "#716add",
+                background: "#fff", backdrop: `
                             rgba(0,0,123,0.4)
                             url("assets/img/SadNyan.webp")
                             left top
                             no-repeat
                           `
-                        });
+            });
         })
     ), { dispatch: false })
 
@@ -109,7 +110,7 @@ export class UsersEffects {
         () => this.actions$.pipe(
             ofType(update),
             exhaustMap(action => this.service.update(action.userUpdated)
-               .pipe(
+                .pipe(
                     map(userUpdated => updateSuccess({ userUpdated })),
                     catchError(error => (error.status == 400) ? of(setErrors({ userForm: action.userUpdated, errors: error.error })) : of(error)
                     )
@@ -118,7 +119,7 @@ export class UsersEffects {
         )
     );
 
-     removeUser$ = createEffect(
+    removeUser$ = createEffect(
         () => this.actions$.pipe(
             ofType(remove),
             exhaustMap(action => this.service.remove(action.id)
@@ -129,7 +130,7 @@ export class UsersEffects {
         )
     );
 
-    
+
     constructor(private actions$: Actions,
         private service: UserService,
         private router: Router) { }
