@@ -114,18 +114,30 @@ export class UsersEffects {
         })
     ), { dispatch: false })
 
-   updateUser$ = createEffect(
-        () => this.actions$.pipe(
-            ofType(update),
-            exhaustMap(action => this.service.update(action.userUpdated)
-                .pipe(
+        updateUser$ = createEffect(() =>
+            this.actions$.pipe(
+                ofType(update),
+                exhaustMap(action =>
+                this.service.update(action.userUpdated).pipe(
                     map(userUpdated => updateSuccess({ userUpdated })),
-                    catchError(error => (error.status == 400) ? of(setErrors({ userForm: action.userUpdated, errors: error.error })) : of(error)
-                    )
+                    catchError(error => {
+                    if (error.status === 400 && error.error) {
+                        // Si error.error es un objeto con campos de error
+                        // o si tiene un mensaje genérico en error.error.message
+                        const errors =
+                        typeof error.error === 'object'
+                            ? error.error
+                            : { general: error.error.message || 'Error desconocido' };
+
+                        return of(setErrors({ userForm: action.userUpdated, errors }));
+                    }
+                    // Para otros errores, podrías manejarlo distinto o lanzar un error genérico
+                    return of(setErrors({ userForm: action.userUpdated, errors: { general: 'Error desconocido' } }));
+                    })
+                )
                 )
             )
-        )
-    );
+            );
 
     removeUser$ = createEffect(
         () => this.actions$.pipe(

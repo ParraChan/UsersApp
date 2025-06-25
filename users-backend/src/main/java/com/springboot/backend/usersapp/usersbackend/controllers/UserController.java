@@ -69,12 +69,20 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
 
         }
-        catch(IllegalArgumentException e){
-            return ResponseEntity
-            .badRequest()
-            .body(Map.of("message ",e.getMessage()));
-            
+        catch (IllegalArgumentException error) {
+        String message = error.getMessage();
+        Map<String, String> errors = new HashMap<>();
+
+        if (message.contains("correo")) {
+            errors.put("email", message);
+        } else if (message.contains("usuario")) {
+            errors.put("username", message);
+        } else {
+            errors.put("general", message);
         }
+
+        return ResponseEntity.badRequest().body(errors);
+     }
     }
 
 
@@ -95,11 +103,20 @@ public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingRes
             return ResponseEntity.notFound().build();
         }
 
-    } catch (IllegalArgumentException e) {
-        return ResponseEntity
-                .badRequest()
-                .body(Map.of("message", e.getMessage()));
-    }
+        } catch (IllegalArgumentException error) {
+            String message = error.getMessage();
+            Map<String, String> errors = new HashMap<>();
+
+            if (message.contains("correo")) {
+                errors.put("email", message);
+            } else if (message.contains("usuario")) {
+                errors.put("username", message);
+            } else {
+                errors.put("general", message);
+            }
+
+            return ResponseEntity.badRequest().body(errors);
+        }
 }
 
     @DeleteMapping("/{id}")
@@ -118,5 +135,5 @@ public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingRes
         errors.put(error.getField(), "El campo " + error.getField() + " " + error.getDefaultMessage());
     });
     return ResponseEntity.badRequest().body(errors);
-}
+    }
 }

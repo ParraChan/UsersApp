@@ -3,7 +3,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { User } from '../../models/user';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { add, find, findAll, findEmailandUsername, resetUser, resetUserEdit, update } from '../../store/users/users.actions';
+import { add, find, resetUser, resetUserEdit, update } from '../../store/users/users.actions';
 
 @Component({
   selector: 'user-form',
@@ -25,17 +25,16 @@ export class UserFormComponent implements OnInit {
     this.user = new User();
 
     this.store.select('users').subscribe(state => {
-      this.errors = state.errors;
+    this.errors = state.errors;
       this.user = { ...state.user };
-      this.emails = state.emails || [];
-      this.usernames = state.usernames || [];
+      console.log('Errores del store:', this.errors);
 
     })
   }
 
   ngOnInit(): void {
     this.store.dispatch(resetUser());
-
+    
     this.route.paramMap.subscribe(params => {
       const id: number = +(params.get('id') || '0');
 
