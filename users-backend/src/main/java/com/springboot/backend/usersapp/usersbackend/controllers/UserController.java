@@ -90,6 +90,7 @@ public class UserController {
     @PutMapping("/{id}")
 public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id) {
 
+        //entra a la tabla por los @
     if (result.hasErrors()) {
         return validation(result);
     }
