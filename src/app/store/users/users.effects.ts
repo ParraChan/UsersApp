@@ -34,12 +34,10 @@ export class UsersEffects {
             ofType(add),
             exhaustMap(action => this.service.create(action.userNew)
             .pipe(
-                map(userNew =>{
-                    return addSuccess({ userNew })
-                    })
-            , catchError(error => (error.status==400)? of(setErrors({userForm: action.userNew, errors: error.error})) : of(error)
+                    map(userNew => addSuccess({ userNew })),
+                    catchError(error => (error.status == 400) ? of(setErrors({ userForm: action.userNew, errors: error.error })) : of(error)
                     )
-                 )
+                )
             )
         )
     )
@@ -111,7 +109,7 @@ export class UsersEffects {
         () => this.actions$.pipe(
             ofType(update),
             exhaustMap(action => this.service.update(action.userUpdated)
-                .pipe(
+               .pipe(
                     map(userUpdated => updateSuccess({ userUpdated })),
                     catchError(error => (error.status == 400) ? of(setErrors({ userForm: action.userUpdated, errors: error.error })) : of(error)
                     )

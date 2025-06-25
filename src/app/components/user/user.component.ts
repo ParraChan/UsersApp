@@ -24,8 +24,6 @@ export class UserComponent implements OnInit {
 
   constructor(
     private store: Store<{ users: any }>,
-    private sharingData: SharingDataService,
-    private service: UserService,
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService) {

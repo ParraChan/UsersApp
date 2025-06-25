@@ -104,10 +104,18 @@
                     <button type="submit" class="btn btn-primary m-2"> <!-- [disabled]="userForm.invalid" -->
                         {{(user.id > 0)? 'Actualizar': 'Crear'}}
                     </button>
+                   
+                    @if(user.id>0){
+                    <button type="button" class="btn btn-secondary my-2" (click)="onClearEdit(userForm)">
+                        Limpiar
+                    </button>
 
+                    }@else{
                     <button type="button" class="btn btn-secondary my-2" (click)="onClear(userForm)">
                         Limpiar
                     </button>
+                    }
+                   
                 </div>
 
             </form>

@@ -7,7 +7,7 @@ export const initialLogin = {
     user: undefined
 }
 
-const initialState = JSON.parse(sessionStorage.getItem('login') || JSON.stringify(initialLogin));
+const initialState = JSON.parse(localStorage.getItem('login') || JSON.stringify(initialLogin));
 
 export const authReducer = createReducer(
     initialState,

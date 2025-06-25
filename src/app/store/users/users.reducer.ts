@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { User } from "../../models/user";
-import { addSuccess, find, findAll, findAllPageable, removeSuccess, resetUser, setErrors, setPaginator, updateSuccess } from "./users.actions";
+import { addSuccess, find, findAll, findAllPageable, loadEmailandUsername, removeSuccess, resetUser, resetUserEdit, setErrors, setPaginator, updateSuccess } from "./users.actions";
 
 const users: User[] = [];
 const user: User = new User();
@@ -9,12 +9,20 @@ export const usersReducer = createReducer(
         users,
         paginator: {},
         user,
-        errors : {}
+        errors : {},
     },
+    //REDUCER BASE
     on(resetUser,(state)=>({
         users: state.users,
         paginator: state.paginator,
         user: {... user},
+        errors: {}
+
+    })),
+    on(resetUserEdit,(state)=>({
+        users: state.users,
+        paginator: state.paginator,
+        user: state.user,
         errors: {}
 
     })),
@@ -68,5 +76,11 @@ export const usersReducer = createReducer(
         paginator: state.paginator,
         user: {... userForm},
         errors: {... errors}
-    }))
+    })),
+    on(loadEmailandUsername, (state, { users }) =>({
+        users: state.users.filter(users => users.email == email),
+        paginator: state.paginator,
+        user: state.user,
+        errors: {}
+    })),
 );

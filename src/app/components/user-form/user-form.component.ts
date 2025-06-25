@@ -3,7 +3,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { User } from '../../models/user';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { add, find, resetUser, update } from '../../store/users/users.actions';
+import { add, find, resetUser, resetUserEdit, update } from '../../store/users/users.actions';
 
 @Component({
   selector: 'user-form',
@@ -43,15 +43,22 @@ export class UserFormComponent implements OnInit {
   onSubmit(userForm: NgForm): void {
 
     if (this.user.id > 0) {
+      console.log(this.user.username);
       this.store.dispatch(update({ userUpdated: this.user }))
+      console.log(this.user);
     } else {
-      this.store.dispatch(add({ userNew: this.user }))
-
+      this.store.dispatch(add({userNew: this.user}))
     }
   }
 
   onClear(userForm: NgForm): void {
     this.store.dispatch(resetUser());
+    userForm.reset();
+    userForm.resetForm();
+  }
+
+  onClearEdit(userForm: NgForm): void{
+    this.store.dispatch(resetUserEdit());
     userForm.reset();
     userForm.resetForm();
   }

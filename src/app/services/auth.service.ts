@@ -28,7 +28,7 @@ export class AuthService {
   }
 
   set user(user: any) {
-    sessionStorage.setItem('login', JSON.stringify(user));
+    localStorage.setItem('login', JSON.stringify(user));
   }
 
   get user() {
@@ -36,11 +36,11 @@ export class AuthService {
   }
 
   set token(token: string) {
-    sessionStorage.setItem('token', token);
+    localStorage.setItem('token', token);
   }
 
   get token() {
-    return sessionStorage.getItem('token')!;
+    return localStorage.getItem('token')!;
   }
 
   getPayload(token: string) {
@@ -60,8 +60,8 @@ export class AuthService {
 
   logout() {
     this.store.dispatch(logout());
-    sessionStorage.removeItem('login');
-    sessionStorage.removeItem('token');
+    localStorage.removeItem('login');
+    localStorage.removeItem('token');
   }
 
 }
