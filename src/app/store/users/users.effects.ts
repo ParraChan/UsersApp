@@ -28,20 +28,28 @@ export class UsersEffects {
         )
 
     );
-
-
-    addUser$ = createEffect(
-        () => this.actions$.pipe(
-            ofType(add),
-            exhaustMap(action => this.service.create(action.userNew)
-                .pipe(
+            addUser$ = createEffect(() =>
+            this.actions$.pipe(
+                ofType(add),
+                exhaustMap(action =>
+                this.service.create(action.userNew).pipe(
                     map(userNew => addSuccess({ userNew })),
-                    catchError(error => (error.status == 400) ? of(setErrors({ userForm: action.userNew, errors: error.error })) : of(error)
-                    )
+                    catchError(err => {
+                    if (err.status === 400 && err.error) {
+                        // Si el backend manda un objeto tipo { campo: mensaje }, lo pasamos directo
+                        return of(setErrors({ userForm: action.userNew, errors: err.error }));
+                    }
+                    return of(
+                        setErrors({
+                        userForm: action.userNew,
+                        errors: { general: 'Error desconocido del servidor' }
+                        })
+                    );
+                    })
+                )
                 )
             )
-        )
-    );
+            );
 
     addSuccessUser$ = createEffect(() => this.actions$.pipe(
         ofType(addSuccess),
@@ -106,7 +114,7 @@ export class UsersEffects {
         })
     ), { dispatch: false })
 
-    updateUser$ = createEffect(
+   updateUser$ = createEffect(
         () => this.actions$.pipe(
             ofType(update),
             exhaustMap(action => this.service.update(action.userUpdated)
@@ -136,3 +144,26 @@ export class UsersEffects {
         private router: Router) { }
 
 }
+
+
+
+
+
+
+/*
+    Swal.fire({
+                title: "Usuario creado",
+                text: "El usuario se ha creado correctamente",
+                width: 600,
+                padding: "3em",
+                color: "#716add",
+                background: "#fff", backdrop: `
+                           rgba(0,0,123,0.4)
+                           url("assets/img/cat.gif")
+                           left top
+                           no-repeat
+                         `
+            });
+
+
+*/ 
