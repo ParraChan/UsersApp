@@ -99,19 +99,23 @@
                         } -->
                     </div>
                 }
-
+                <div class="form-check my-2"></div>
+                    <input type="checkbox" class="form-check-input mx-3"
+                    name="admin"
+                    [(ngModel)]="user.admin">
+                    <label class="form-check-label">Admin</label>
                 <div>
                     <button type="submit" class="btn btn-primary m-2"> <!-- [disabled]="userForm.invalid" -->
                         {{(user.id > 0)? 'Actualizar': 'Crear'}}
                     </button>
                    
                     @if(user.id>0){
-                    <button type="button" class="btn btn-secondary my-2" (click)="onClearEdit(userForm)">
+                    <button type="button" class="btn btn-secondary my-5" (click)="onClearEdit(userForm)">
                         Limpiar
                     </button>
 
                     }@else{
-                    <button type="button" class="btn btn-secondary my-2" (click)="onClear(userForm)">
+                    <button type="button" class="btn btn-secondary my-5" (click)="onClear(userForm)">
                         Limpiar
                     </button>
                     }
