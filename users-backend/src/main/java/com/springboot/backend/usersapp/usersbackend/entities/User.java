@@ -23,6 +23,7 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -47,7 +48,7 @@ public class User implements IUser {
     private String lastname;
     
     @NotBlank(message = "El correo es obligatorio")
-    @Email(message = "El correo debe ser válido")
+    @Email(message = "El correo debe ser válido", regexp ="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}",flags = Pattern.Flag.CASE_INSENSITIVE )
     private String email;
     
     @NotBlank(message = "El nombre de usuario es obligatorio")
