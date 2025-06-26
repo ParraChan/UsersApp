@@ -26,7 +26,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "username"),
+    @UniqueConstraint(columnNames = "correo")
+})
 public class User implements IUser {
 
 
@@ -36,27 +39,26 @@ public class User implements IUser {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @NotEmpty
+    @NotEmpty(message = "El nombre es obligatorio")
     private String name;
 
-    @NotEmpty
+    @NotEmpty(message = "El apellido es obligatorio")
     @Column(name = "lastname")
     private String lastname;
     
-    @NotBlank
-    @Email
+    @NotBlank(message = "El correo es obligatorio")
+    @Email(message = "El correo debe ser válido")
     private String email;
     
-    @NotBlank
-    @Size(min = 8,max = 20)
+    @NotBlank(message = "El nombre de usuario es obligatorio")
+    @Size(min = 8, max = 20, message = "El nombre de usuario debe tener entre 8 y 20 caracteres")
     private String username;
 
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean admin;
     
-    @NotBlank
-    //(@Size(min = 6,max = 20)
+    @NotBlank(message = "la contraseña es obligatoria")
     private String password;
 
     @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})

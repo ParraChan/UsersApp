@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,8 +28,6 @@ import com.springboot.backend.usersapp.usersbackend.models.UserRequest;
 import com.springboot.backend.usersapp.usersbackend.services.UserService;
 
 import jakarta.validation.Valid;
-
-import org.springframework.web.bind.annotation.PutMapping;
 
 //@CrossOrigin(originPatterns = {"*"})
 @CrossOrigin(origins={"http://localhost:4200"})
@@ -60,65 +59,29 @@ public class UserController {
                 .body(Collections.singletonMap("error", "el usuario no se encontro por el id:" + id));
     }
     
-    @PostMapping
+   @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
-        if (result.hasErrors()) {
-            return validation(result);
-        }
-        try{
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
-
-        }
-        catch (IllegalArgumentException error) {
-        String message = error.getMessage();
-        Map<String, String> errors = new HashMap<>();
-
-        if (message.contains("correo")) {
-            errors.put("email", message);
-        } else if (message.contains("usuario")) {
-            errors.put("username", message);
-        } else {
-            errors.put("general", message);
-        }
-
-        return ResponseEntity.badRequest().body(errors);
-     }
+    if (result.hasErrors()) {
+        return validation(result);
     }
+    User savedUser = service.save(user);
+    return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+}
 
 
 
     @PutMapping("/{id}")
-public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id) {
+    public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id) {
 
-        //entra a la tabla por los @
-    if (result.hasErrors()) {
-        return validation(result);
+    if (result.hasErrors()) return validation(result);
+
+    return service.update(user, id)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());    
+
     }
 
-    try {
-        Optional<User> userOptional = service.update(user, id);
 
-        if (userOptional.isPresent()) {
-            return ResponseEntity.ok(userOptional.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-
-        } catch (IllegalArgumentException error) {
-            String message = error.getMessage();
-            Map<String, String> errors = new HashMap<>();
-
-            if (message.contains("correo")) {
-                errors.put("email", message);
-            } else if (message.contains("usuario")) {
-                errors.put("username", message);
-            } else {
-                errors.put("general", message);
-            }
-
-            return ResponseEntity.badRequest().body(errors);
-        }
-}
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
@@ -137,4 +100,5 @@ public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingRes
     });
     return ResponseEntity.badRequest().body(errors);
     }
+    
 }
