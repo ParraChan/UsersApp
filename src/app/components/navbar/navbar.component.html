@@ -33,10 +33,10 @@
           <span class="nav-link nav-item text-primary mx-3">
             @if (login.isAuth) {
               {{login.user.username}}
-              <button (click)="handlerLogout()" class="btn btn-outline-success">Logout</button>
+              <button (click)="handlerLogout()" class="btn btn-outline-success">Cerrar sesion</button>
             }@else {
                <a  class="btn btn-outline-primary"
-            [routerLink]="['/login']">Sign in</a>
+            [routerLink]="['/login']">Inicie sesion</a>
             }
            
           </span>

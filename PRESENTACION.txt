@@ -1,0 +1,19 @@
+presentacion de cada componente 
+Login
+Formulario
+lista de usuariios
+navbar
+
+Modelos, Usuario
+
+Router,
+validaciones
+login logout
+
+
+Back
+MVC
+interfaces, modelos,
+EXPLICAR AL MISMO TIEMPO
+
+BD motor, que tablas, datos, restricciones , relaciones
