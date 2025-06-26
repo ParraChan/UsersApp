@@ -1,11 +1,12 @@
-<h3>{{ title }}</h3>
+  <h3>{{ title }}</h3>
 
 @if (admin) {
 <button class="btn btn-primary my-3" [routerLink]="['/users/create']">
   Crear usuario
 </button>
+}
 @if (loading) {
-<div class="spinner-border" role="status">
+<div class="spinner-border d-block" role="status">
   <span class="visually-hidden">Loading...</span>
 </div>
 }@else { @if (users.length==0) {
@@ -55,4 +56,14 @@
 
 }
 <paginator [paginator]="paginator" [url]="pageUrl"></paginator>
-} }
+}  <!--@else if(admin== false){
+  <div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">Inicia sesion</h5>
+    <h6 class="card-subtitle mb-2 text-body-secondary my-3">Por favor inicie sesion</h6>
+    <button class="btn btn-primary my-3" [routerLink]="['/login']">Iniciar Sesion</button>
+    
+  </div>
+</div>
+
+}-->
