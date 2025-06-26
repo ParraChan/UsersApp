@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { User } from '../../models/user';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { add, find, resetUser, resetUserEdit, update } from '../../store/users/users.actions';
 
@@ -20,40 +20,50 @@ export class UserFormComponent implements OnInit {
 
 
   constructor(
+    private router: Router,
     private store: Store<{ users: any }>,
     private route: ActivatedRoute) {
     this.user = new User();
 
     this.store.select('users').subscribe(state => {
-    this.errors = state.errors;
+      this.errors = state.errors;
       this.user = { ...state.user };
-      console.log('Errores del store:', this.errors);
+      //console.log('Errores del store:', this.errors);
 
     })
   }
 
   ngOnInit(): void {
+
+
     this.store.dispatch(resetUser());
-    
+
     this.route.paramMap.subscribe(params => {
       const id: number = +(params.get('id') || '0');
 
       if (id > 0) {
+        const navigation = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
+        if (navigation.type === "reload") {
+        // Redirigir al home (ajusta si usas otra ruta)
+        window.location.href = '/users';
+        return; // Evita que el resto del código se ejecute
+    }
         this.store.dispatch(find({ id }))
       }
     });
   }
 
+
   onSubmit(userForm: NgForm): void {
 
     if (this.user.id > 0) {
 
-      console.log(this.user);
+      //console.log(this.user);
       this.store.dispatch(update({ userUpdated: this.user }));
-      console.log(this.user);
+      //console.log(this.user);
     } else {
 
-      this.store.dispatch(add({userNew: this.user}))
+      this.store.dispatch(add({ userNew: this.user }))
     }
   }
 
@@ -63,10 +73,12 @@ export class UserFormComponent implements OnInit {
     userForm.resetForm();
   }
 
-  onClearEdit(userForm: NgForm): void{
+  onClearEdit(userForm: NgForm): void {
+
     this.store.dispatch(resetUserEdit());
     userForm.reset();
     userForm.resetForm();
   }
+
 
 }
